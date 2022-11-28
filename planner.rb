@@ -29,16 +29,18 @@ LEFT_PAGE_MARGINS = [36, 72, 36, 36]
 RIGHT_PAGE_MARGINS = [36, 36, 36, 72]
 
 # Names by day of week, 0 is Sunday.
-OOOS_BY_WDAY = [nil, nil, ['Juan'], ['Kelly'], nil, ['Alex', 'Edna'], nil]
+# OOOS_BY_WDAY = [nil, nil, ['Juan'], ['Kelly'], nil, ['Alex', 'Edna'], nil]
+OOOS_BY_WDAY = [nil, nil, nil, nil, nil, nil, nil]
 
 # Repeating tasks by day of week, 0 is Sunday. Nested index is the row.
 TASKS_BY_WDAY = [
   { 0 => 'Plan meals' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
-  { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
+  # { 0 => 'Update standup notes', 12 => 'Italian', 13 => 'Walk dog' },
+  { },
+  { },
+  { },
+  { },
+  { },
   { 0 => 'Plan next week' },
 ]
 
@@ -101,24 +103,6 @@ def business_days_left_in_year(date)
     "1 work day left in the year"
   else
     "#{days} work days in the year"
-  end
-end
-
-def business_days_left_in_sprint(date)
-  sprint_end =
-    if date.mday <= 15
-      Date.new(date.year, date.month, 15)
-    else
-      Date.new(date.year, date.month, -1)
-    end
-  days = business_days_between(date, sprint_end)
-  case days
-  when 0
-    "last day of sprint"
-  when 1
-    "1 day left in sprint"
-  else
-    "#{days} days left in sprint"
   end
 end
 
@@ -204,16 +188,6 @@ def week_ahead_page first_day, last_day
       stroke_line bounds.bottom_left, bounds.bottom_right
     end
   end
-
-  # Checkboxes
-  checkbox_padding = 6
-  checkbox_size = grid.row_height - (2 * checkbox_padding)
-  ((first_row + 1)..last_row).each do |row|
-    grid(row, 0).bounding_box do
-      draw_checkbox checkbox_size, checkbox_padding
-    end
-  end
-
 
 end
 
@@ -310,7 +284,6 @@ def daily_calendar_page date
   right_header = date.strftime("%A")
   left_subhed = date.strftime("Quarter #{quarter(date)} Week %W Day %j")
   # right_subhed = business_days_left_in_year(date)
-  right_subhed = business_days_left_in_sprint(date)
   grid([0, first_column],[1, 1]).bounding_box do
     text left_header, size: 20, align: :left
   end
@@ -319,9 +292,6 @@ def daily_calendar_page date
   end
   grid([1, first_column],[1, last_column]).bounding_box do
     text left_subhed, color: MEDIUM_COLOR, align: :left
-  end
-  grid([1, first_column],[1, last_column]).bounding_box do
-    text right_subhed, color: MEDIUM_COLOR, align: :right
   end
 
   # Hour labels
